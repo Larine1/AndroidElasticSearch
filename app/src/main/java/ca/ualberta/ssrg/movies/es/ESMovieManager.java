@@ -126,9 +126,11 @@ public class ESMovieManager {
 		 */
 		Type searchResponseType = new TypeToken<SearchResponse<Movie>>() {
 		}.getType();
+
+		earchResponse<Movie> esResponse;
 		
 		try {
-			SearchResponse<Movie> esResponse = gson.fromJson(
+			 esResponse = gson.fromJson(
 					new InputStreamReader(response.getEntity().getContent()),
 					searchResponseType);
 		} catch (JsonIOException e) {
@@ -142,7 +144,13 @@ public class ESMovieManager {
 		}
 		
 		// Extract the movies from the esResponse and put them in result
+		for (searchHit<Movies> hit: esResponse.getHits().getHits()){
+			movies.add(hit.getSource());
+		}
+
 
 		movies.notifyObservers();
+
+		return movies;
 	}
 }
